@@ -52,18 +52,19 @@ class Graf{
 
         vizitat[nod]=cont;
         varf[nod]=cont;
+        cont++;
         s.push(nod);
         for(int i=0; i<vecin[nod].size(); ++i){
             if(vizitat[vecin[nod][i]]==-1){
-                cont=cont+1;
+                s.push(nod*(-1));
                 recursieBC(vecin[nod][i], vizitat,varf,s,cont,nr,sol,k);
                 if( varf[ vecin[nod][i] ] >= vizitat[nod] ){
                     nr++;
-                    while(s.top()!=nod){
-                        sol[k]=s.top(); k++;
+                    while(s.top()!=nod && s.top()!=nod*(-1)){
+                        if(s.top()>0){ sol[k]=s.top(); k++;}
                         s.pop();
                     }
-                    sol[k]=s.top(); k++;
+                    sol[k]=nod; k++;
                     sol[k]=-1; k++;
                 }
                 varf[nod]=min( varf[nod], varf[ vecin[nod][i] ] );
@@ -172,12 +173,20 @@ public:
         int cont=0,nr=0,solutie[2*n+5], k=0;
         for(int i=1;i<=n;++i){
             if(desc[i]==-1){
-                recursieBC(i,desc,varf,s,cont,nr,solutie,k); s.pop();
+                if(vecin[i].empty()==true){
+                    desc[i]=cont;
+                    cont++;
+                    nr++;
+                    solutie[k]=i; k++;
+                    solutie[k]=-1; k++;
+                }else{
+
+                    recursieBC(i,desc,varf,s,cont,nr,solutie,k);
+                }
+                while(s.empty()!=true) s.pop();
             }
 
         }
-        for(int i=1;i<=n;++i)cout<<desc[i];
-        for(int i=1;i<=n;++i)cout<<varf[i];
         out<<nr<<"\n";
         int j=k-2;
         while(j>=0){
