@@ -56,8 +56,10 @@ class Graf{
         s.push(nod);
         for(int i=0; i<vecin[nod].size(); ++i){
             if(vizitat[vecin[nod][i]]==-1){
+
                 s.push(nod*(-1));
                 recursieBC(vecin[nod][i], vizitat,varf,s,cont,nr,sol,k);
+
                 if( varf[ vecin[nod][i] ] >= vizitat[nod] ){
                     nr++;
                     while(s.top()!=nod && s.top()!=nod*(-1)){
@@ -66,8 +68,9 @@ class Graf{
                     }
                     sol[k]=nod; k++;
                     sol[k]=-1; k++;
+                }else{
+                    varf[nod]=min( varf[nod], varf[ vecin[nod][i] ] );
                 }
-                varf[nod]=min( varf[nod], varf[ vecin[nod][i] ] );
 
             }else varf[nod]=min( varf[nod], vizitat[ vecin[nod][i] ] );
         }
@@ -174,8 +177,7 @@ public:
         for(int i=1;i<=n;++i){
             if(desc[i]==-1){
                 if(vecin[i].empty()==true){
-                    desc[i]=cont;
-                    cont++;
+
                     nr++;
                     solutie[k]=i; k++;
                     solutie[k]=-1; k++;
