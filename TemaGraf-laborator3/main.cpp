@@ -18,6 +18,16 @@ class Graf{
 
     }
 
+    void recursieDFS_sort(int nod, bool vizitat[],stack <int> &s){
+        vizitat[nod]=true;
+        for(int i=0; i<vecin[nod].size(); ++i)
+            if(vizitat[vecin[nod][i]]==false)
+                recursieDFS_sort(vecin[nod][i], vizitat,s);
+
+        s.push(nod);
+
+    }
+
 
 
     void recursieCTC(int nod, int vizitat[], int varf[], stack <int> &s, bool scheck[], int &cont,int &nr,int sol[],int &k){
@@ -200,8 +210,6 @@ public:
         }
 
 
-
-
     }
 
 
@@ -230,6 +238,22 @@ public:
         return "este graf";
     }
 
+    void ST(){
+        bool vizitat[n+1];
+        stack <int> st;
+
+        for(int i=1; i<=n;++i)
+            vizitat[i]=false;
+        for(int i=1; i<=n;++i)
+            if(vizitat[i]==false)
+                recursieDFS_sort(i,vizitat,st);
+
+        while(st.empty()!=true){
+            out<<st.top()<<" ";
+            st.pop();
+        }
+    }
+
 };
 
 
@@ -241,8 +265,8 @@ int main()
     in>>n>>m;
 
     Graf g(n,m);
-    g.citireM(false);
-    g.BC();
+    g.citireM(true);
+    g.ST();
 
 
     return 0;
