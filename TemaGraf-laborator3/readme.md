@@ -1,1 +1,1 @@
-DFS,BFS,CTC,HAVEL HAKIMI si BICONEX(incomplet)
+DFS,BFS,CTC,HAVEL HAKIMI, sortaret si BICONEX(incomplet)
