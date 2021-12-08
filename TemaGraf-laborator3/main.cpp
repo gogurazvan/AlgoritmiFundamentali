@@ -1,8 +1,8 @@
 #include<bits/stdc++.h>
 
 using namespace std;
-ifstream in("alg.in");
-ofstream out("alg.out");
+ifstream in("darb.in");
+ofstream out("darb.out");
 const int nmax = 100001;
 
 class Graf{
@@ -15,6 +15,13 @@ class Graf{
         for(int i=0; i<vecin[nod].size(); ++i)
             if(vizitat[vecin[nod][i]]==false)
                 recursieDFS(vecin[nod][i], vizitat);
+
+    }
+    void recursieDFSdistante(int nod, int vizitat[],int k){
+        vizitat[nod]=k;
+        for(int i=0; i<vecin[nod].size(); ++i)
+            if(vizitat[vecin[nod][i]]==-1)
+                recursieDFSdistante(vecin[nod][i], vizitat,k+1);
 
     }
 
@@ -213,7 +220,7 @@ public:
     }
 
 
-    string HH(){
+    bool HH(){
         int grad[n+3];
         for(int i=1; i<=n;++i)
             in>>grad[i];
@@ -221,21 +228,21 @@ public:
 
         int nr0=0;
         for(int i=1; i<=n; ++i){
-            if(grad[i]==0) return "este graf";
-            if(grad[i]>n-i) return "nu este graf";
+            if(grad[i]==0) return true;
+            if(grad[i]>n-i) return false;
             if(grad[i]==1){
-                if((n-i-nr0+1)%2==0) return "este graf";
-                else return "nu este graf";
+                if((n-i-nr0+1)%2==0) return true;
+                else return false;
             }
             for(int j=i+1; j<=i+grad[i]; ++j){
 
                 grad[j]--;
-                if(grad[j]<0) return "nu este graf";
+                if(grad[j]<0) return false;
                 if(grad[j]==0) nr0++;
             }
             sort(grad+i+1,grad+n+1,greater<int>());
         }
-        return "este graf";
+        return true;
     }
 
     void ST(){
@@ -253,6 +260,39 @@ public:
             st.pop();
         }
     }
+    int Darb(){
+        int distante[100001];
+        for(int i=1;i<=n;++i)
+            distante[i]=-1;
+        recursieDFSdistante(1,distante,0);
+        int nod_mac=1,mac=0;
+        for(int i=1;i<=n;++i){
+            if(distante[i]>mac)
+            {
+                mac=distante[i];
+                nod_mac=i;
+            }
+            distante[i]=-1;
+        }
+        recursieDFSdistante(nod_mac,distante,0);
+        for(int i=1;i<=n;++i)
+            if(distante[i]>mac)
+                mac=distante[i];
+
+        return mac+1;
+
+
+
+    }
+
+    void Roy_Floyd(int M[101][101]){
+        for(int k=1;k<=n;++k)
+            for(int i=1;i<=n;++i)
+                for(int j=1;j<=n;++j){
+                    if( (M[i][j] > M[i][k]+M[k][j] || ( M[i][j]==0 && i!=j )) && M[i][k]!=0 && M[k][j]!=0)
+                        M[i][j]=M[i][k]+M[k][j];
+                }
+    }
 
 };
 
@@ -262,11 +302,14 @@ public:
 int main()
 {
     int n,m;
-    in>>n>>m;
+    in>>n;
 
-    Graf g(n,m);
-    g.citireM(true);
-    g.ST();
+    Graf g(n,n-1);
+
+    g.citireM(false);
+
+    out<<g.Darb();
+
 
 
     return 0;
