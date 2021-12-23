@@ -1,13 +1,18 @@
 #include<bits/stdc++.h>
 
 using namespace std;
-ifstream in("darb.in");
-ofstream out("darb.out");
+ifstream in("alg.in");
+ofstream out("alg.out");
 const int nmax = 100001;
+
+struct muchie_prop{
+    int cost;
+};
 
 class Graf{
     int n, m;
     vector<int> vecin[nmax];
+    map<pair<int, int>, muchie_prop> prop;
 
 
     void recursieDFS(int nod, bool vizitat[]){
@@ -102,12 +107,25 @@ public:
         this->m=m;
     }
 
-    void citireM( bool orient ){
+    void citireM( bool orient , int nivel_costuri=0){
+
         for( int i=0; i<m; ++i ){
 
-            int a, b;  in >> a >> b;
+            int a, b, c;
+            in >> a >> b;
             vecin[a].push_back(b);
-            if( orient == false ) vecin[b].push_back(a);
+
+            if( nivel_costuri>=1 ){
+                in>>c;
+                prop[{a,b}].cost=c;
+            }
+
+            if( orient == false ){
+                vecin[b].push_back(a);
+                if( nivel_costuri>=1 ){
+                    prop[{b,a}].cost=c;
+                }
+            }
         }
     }
 
@@ -294,6 +312,44 @@ public:
                 }
     }
 
+    void Dijkstra(int start, int dist[]){
+        bool viz[n+1];
+        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>> > dist_min;
+        for( int i=1; i<=n; ++i ){
+            viz[i]=false;
+            dist[i]=-1;
+        }
+        int p = start;
+        dist[start]=0;
+
+        for( int i=1; i<=n; ++i ){
+            viz[p]=true;
+            for( int j=0; j< vecin[p].size(); ++j ){
+                int nvec = vecin[p][j];
+                if( !viz[nvec] && ( dist[nvec] == -1  ||  dist[nvec] > dist[p]+ prop[{p,nvec}].cost ) ){
+                    dist[nvec]= dist[p]+ prop[{p,nvec}].cost;
+                    dist_min.push( make_pair(dist[nvec], nvec) );
+                }
+
+            }
+
+            while( viz[ dist_min.top().second ] && !dist_min.empty() )
+                dist_min.pop();
+            if(!dist_min.empty()){
+                p=dist_min.top().second;
+                dist_min.pop();
+            }
+
+
+
+
+
+        }
+
+    }
+
+
+
 };
 
 
@@ -301,14 +357,7 @@ public:
 
 int main()
 {
-    int n,m;
-    in>>n;
 
-    Graf g(n,n-1);
-
-    g.citireM(false);
-
-    out<<g.Darb();
 
 
 
